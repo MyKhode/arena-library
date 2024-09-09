@@ -23,7 +23,9 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          name: build-artifact
           path: .vercel/output/
+
           node-version: 20
           package-manager: npm # Change this from pnpm to npm
 

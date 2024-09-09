@@ -1,12 +1,12 @@
+// astro.config.mjs
 import { defineConfig } from "astro/config";
 import vercel from "@astrojs/vercel/serverless";
 import tailwind from "@astrojs/tailwind";
 import solidJs from "@astrojs/solid-js";
 
-// https://astro.build/config
 export default defineConfig({
   site: "https://MyKhode.github.io",
-  output: "server",
+  output: "server", // this should be correct for Vercel
   adapter: vercel(),
   integrations: [tailwind(), solidJs()],
 });
