@@ -3,7 +3,7 @@ import { supabase } from "../../lib/supabase";
 
 export const GET: APIRoute = async () => {
   const { data, error } = await supabase
-    .from("guestbook")
+    .from("items.guestbook")
     .select("*")
     .order("created_at", { ascending: true });
 

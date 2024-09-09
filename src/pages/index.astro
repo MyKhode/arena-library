@@ -2,20 +2,35 @@
 import Base from "../layout/Base.astro";
 import Supabase from "../icons/Supabase.astro";
 import AstroIcon from "../icons/AstroIcon.astro";
-import { supabase } from "../lib/supabase";
 
 export const prerender = true;
 const title = "Arena Horizon";
 
-// Fetch users from Supabase
-const { data: { users } = {}, error } = await supabase.auth.admin.listUsers();
+// Fetch data and log it to the console
+const fetchData = async () => {
+  try {
+    const response = await fetch('/api/fetch-messages'); // Ensure this matches your API route
+    const { data, error } = await response.json();
 
-if (error) {
-  console.error("Error fetching users:", error.message);
-  // Handle error if needed
-}
+    if (error) {
+      console.error('Error fetching data:', error);
+      return { messages: [] };
+    }
+
+    // Log the fetched data to the console
+    console.log('Fetched messages:', data);
+
+    return { messages: data };
+  } catch (error) {
+    console.error('An unexpected error occurred:', error);
+    return { messages: [] };
+  }
+};
+
+const { messages } = await fetchData();
+let message: string = 'Hello, TypeScript!';
+
 ---
-
 <Base title={title}>
   <main class="flex-1 flex flex-col gap-4 items-center p-4 justify-center">
     <h1 class="text-2xl sm:text-4xl font-bold text-center">{title}</h1>
@@ -25,7 +40,7 @@ if (error) {
       >
         <AstroIcon />
       </li>
-       &plus;
+      &plus;
       <li
         class="dark:bg-zinc-800 bg-white border-t dark:border-zinc-700 h-20 w-20 border-transparent rounded-lg shadow dark:shadow-none flex items-center justify-center"
       >
@@ -36,16 +51,15 @@ if (error) {
     <a
       href="https://github.com/kevinzunigacuellar/astro-supabase"
       class="font-mono max-w-prose underline underline-offset-2 hover:text-blue-700 text-blue-600 dark:text-blue-500 dark:hover:text-blue-400"
-      >Source code on GitHub</a
-    >
+    >Source code on GitHub {message}</a>
 
-    {/* Display Users */}
+    {/* Display Messages */}
     <section class="mt-6">
-      <h2 class="text-xl font-bold">User List</h2>
+      <h2 class="text-xl font-bold">Messages</h2>
       <ul class="list-disc mt-4 pl-6">
-        {users && users.map(user => (
-          <li key={user.id} class="py-2">
-            {user.email} - {user.id}
+        {messages && messages.map((item, index) => (
+          <li key={index} class="py-2">
+            {item.msg}
           </li>
         ))}
       </ul>
