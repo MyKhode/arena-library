@@ -25,9 +25,7 @@ jobs:
         with:
           path: .
           node-version: 20
-          package-manager: pnpm@latest
-      - name: Install dependencies with no frozen lockfile
-        run: pnpm install --no-frozen-lockfile
+          package-manager: npm # Change this from pnpm to npm
 
 
   deploy:
