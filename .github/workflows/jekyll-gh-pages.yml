@@ -1,0 +1,84 @@
+# Workflow for building and deploying an Astro site using Vercel (with optional fallback to GitHub Pages)
+name: Build and Deploy Astro Site
+
+on:
+  # Trigger the workflow on pushes to the 'main' branch
+  push:
+    branches:
+      - main
+
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # Job to build the Astro site
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js (ensure compatibility with Astro)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Build the Astro site for Vercel deployment
+      - name: Build Astro site
+        run: npm run build
+
+      # Step 5: List build output directory (for debugging purposes)
+      - name: List output directory
+        run: ls -la .vercel/output/  # Verifies the output directory exists
+
+      # Step 6: Upload the build artifact for potential GitHub Pages fallback or other deployments
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: build-artifact
+          path: .vercel/output/  # Ensure Vercel's output directory is correct
+
+  # Optional job to deploy to GitHub Pages (fallback if not using Vercel)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # Ensure this job runs after the build step
+    if: success()  # Only deploy if the build was successful
+    steps:
+      # Step 1: Download the previously uploaded build artifact
+      - name: Download build artifact
+        uses: actions/download-pages-artifact@v2
+
+      # Step 2: Deploy to GitHub Pages (in case Vercel isn't configured)
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          branch: gh-pages  # Deploys to the 'gh-pages' branch of your repository
+
+      # Set the environment URL to point to GitHub Pages
+      - name: Set GitHub Pages URL
+        run: echo "Site deployed at https://yourusername.github.io/yourrepository"
+
+  # Deployment job to Vercel (Primary)
+  deploy-vercel:
+    runs-on: ubuntu-latest
+    needs: build  # Ensures this job runs after the build job
+    steps:
+      # Step 1: Deploy to Vercel using Vercel's API token
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v21
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}  # Ensure you add this secret in your repo
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}  # Your Vercel Org ID
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # Your Vercel Project ID
+          working-directory: ./  # Point to your project root
+
+      # Step 2: Check the Vercel deployment URL
+      - name: Print Vercel URL
+        run: echo "Site deployed at: https://your-vercel-project.vercel.app"
+
