@@ -23,9 +23,12 @@ jobs:
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         with:
-          path: . # The root location of your Astro project inside the repository. (optional)
-          node-version: 20 # The specific version of Node that should be used to build your site. Defaults to 20. (optional)
-          package-manager: pnpm@latest # Specify the pnpm version
+          path: .
+          node-version: 20
+          package-manager: pnpm@latest
+      - name: Install dependencies with no frozen lockfile
+        run: pnpm install --no-frozen-lockfile
+
 
   deploy:
     needs: build
