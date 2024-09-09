@@ -2,8 +2,23 @@
 import Base from "../layout/Base.astro";
 import Supabase from "../icons/Supabase.astro";
 import AstroIcon from "../icons/AstroIcon.astro";
-export const prerender = true;
-const title = "Arena Horizon";
+import { supabase } from "../lib/supabase";
+
+// Fetch the current user's display name from Supabase
+const user = await supabase.auth.getUser(); // Get the logged-in user
+let title = "Arena Horizon"; // Default title
+
+if (user) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("display_name")
+    .eq("id", user.user?.id)
+    .single();
+
+  if (data?.display_name) {
+    title = data.display_name;
+  }
+}
 ---
 
 <Base title={title}>
