@@ -20,10 +20,10 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: .vercel/output/
           node-version: 20
           package-manager: npm # Change this from pnpm to npm
 
