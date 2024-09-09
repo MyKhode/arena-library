@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       options: {
         redirectTo: import.meta.env.DEV
           ? "http://localhost:4321/api/auth/callback"
-          : "https://arena.ikhode.site/api/auth/callback",
+          : "https://arena-library-hsg8s8xqf-soytets-projects.vercel.app/api/auth/callback",
       },
     });
 
