@@ -1,0 +1,31 @@
+---
+const { 
+  gameName = "Chess", 
+  location = "Cochin, KL", 
+  releaseDate = "05-25-2021", 
+  thumbnailUrl = "https://images.unsplash.com/photo-1622180203374-9524a54b734d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1950&amp;q=80", 
+  playersCount = 62 
+} = Astro.props;
+---
+
+<div class="flex flex-col max-w-sm mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="relative w-full h-48">
+            <img src={thumbnailUrl} alt="Game Thumbnail" class="w-full h-full object-cover">
+            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-transparent to-transparent py-2 px-4">
+                <h2 class="text-xl font-semibold text-white">{gameName}</h2>
+                <p class="text-sm text-gray-300">{location}</p>
+                <p class="text-sm text-gray-400">{releaseDate}</p>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-sm text-gray-500">Players:</p>
+                <p class="text-lg font-medium text-gray-800">{playersCount}</p>
+            </div>
+            <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                Play Now
+            </button>
+        </div>
+    </div>
+</div>
