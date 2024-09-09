@@ -8,13 +8,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const password = formData.get("password")?.toString();
   const provider = formData.get("provider")?.toString();
 
+  // Set the production callback URL directly
+  const redirectUrl = "https://arena.ikhode.site/api/auth/callback";
+
   if (provider) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider as Provider,
       options: {
-        redirectTo: import.meta.env.DEV
-          ? "http://localhost:4321/api/auth/callback"
-          : "https://arena-library-hsg8s8xqf-soytets-projects.vercel.app/api/auth/callback",
+        redirectTo: redirectUrl,
       },
     });
 
