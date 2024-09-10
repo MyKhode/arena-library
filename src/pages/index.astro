@@ -2,17 +2,40 @@
 import Base from "../layout/Base.astro";
 import { supabase } from "../lib/supabase";
 import { Reviews, type GuestbookEntry } from "../components/Reviews";
-import Sidebar from "../layout/Sidebar.astro";
+
+import Sidebar from "../layout/Sidebar.astro"; // Import Sidebar
 import Card from "../components/Card.astro";
 import MaFooter from "../components/MaFooter.astro";
 
 const { email } = Astro.locals;
-const { data: { user } } = await supabase.auth.getUser();
+// Fetch user data
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
-// Fetch cash data
-const baseUrl = import.meta.env.API_BASE_URL;
-const res = await fetch(`${baseUrl}/api/fetch-cash`);
-const cashData = await res.json();
+// Fetch data from the 'cash' table
+let { data: cashData, error } = await supabase.from("cash").select("*").eq('id', user?.id);
+
+if (error) {
+  console.error("Error fetching cash data:", error);
+}
+
+// If no data found and user.id is not null, insert a new record
+if (!cashData || cashData.length === 0) {
+  if (user?.id) {
+    const { data: newCashData, error: insertError } = await supabase
+      .from('cash')
+      .insert([{ id: user.id, money: 2000 }])
+      .select();
+    
+    if (insertError) {
+      console.error("Error inserting cash data:", insertError);
+    } else {
+      cashData = newCashData;
+    }
+  }
+}
+          
 
 const { data } = (await supabase
   .from("guestbook")
@@ -49,30 +72,83 @@ const { data } = (await supabase
     />
 
     <!-- Main Content Section -->
-    <main class="flex-grow ml-0 sm:ml-64 p-6 transition-all duration-300 overflow-y-scroll">
+    <main
+      class="flex-grow ml-0 sm:ml-64 p-6 transition-all duration-300 overflow-y-scroll"
+    >
       <h1
         class="text-3xl sm:text-5xl font-extrabold text-center text-gray-800 dark:text-gray-200"
       >
         Let's Play & Challenge your friends
       </h1>
-
-      <section class="text-center mt-4">
-        <p class="text-xl font-semibold">Cash: ${cashData.money}</p>
+      <!-- Display Cash Data -->
+      <section class="mt-20">
+        <!-- {user?.id} -->
+        {
+          cashData && cashData.length > 0 ? (
+            <ul>
+              {cashData.map((item) => (
+                <li key={item.id} class="mb-4 p-4 border rounded-md">
+                  <p>
+                    <strong>ID:</strong> {item.id}
+                  </p>
+                  <p>
+                    <strong>Money:</strong> ${item.money}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No cash data available.</p>
+          )
+        }
       </section>
-
       <section
         class="mt-20 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-11 mb-20"
       >
         <!-- Card Section -->
-        <!-- Replace Card components with actual data as needed -->
         <Card
           gameName="Chess"
           location="Cochin, KL"
           releaseDate="05-25-2021"
-          thumbnailUrl="https://example.com/image.jpg"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
           playersCount={62}
         />
-        <!-- Add more <Card /> components as needed -->
+        <Card
+          gameName="Chess"
+          location="Cochin, KL"
+          releaseDate="05-25-2021"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
+          playersCount={62}
+        />
+        <Card
+          gameName="Chess"
+          location="Cochin, KL"
+          releaseDate="05-25-2021"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
+          playersCount={62}
+        />
+        <Card
+          gameName="Chess"
+          location="Cochin, KL"
+          releaseDate="05-25-2021"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
+          playersCount={62}
+        />
+        <Card
+          gameName="Chess"
+          location="Cochin, KL"
+          releaseDate="05-25-2021"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
+          playersCount={62}
+        />
+        <Card
+          gameName="Chess"
+          location="Cochin, KL"
+          releaseDate="05-25-2021"
+          thumbnailUrl="https://scontent.fpnh8-1.fna.fbcdn.net/v/t39.30808-6/327276488_3044625129176382_7975137548558445070_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeFpyTbKizBh24QSDXLagTZd-w0elx4Lu1b7DR6XHgu7VoTuk-LCKUXIuzi8nm1Zlxlk6KG9-V6PIEXBZqMynOza&_nc_ohc=SzBJ03l6UjQQ7kNvgHyceOm&_nc_zt=23&_nc_ht=scontent.fpnh8-1.fna&oh=00_AYD60U4rurclsLxTOSO4SA9yjaPyfGjJaSm5Ozm063JkaA&oe=66E4FBC4"
+          playersCount={62}
+        />
+        <!-- More <Card /> components here -->
       </section>
       <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
         <p
@@ -108,5 +184,4 @@ const { data } = (await supabase
       });
     }
   </script>
- 
 </Base>
