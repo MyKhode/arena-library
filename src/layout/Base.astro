@@ -5,9 +5,9 @@ interface Props {
   title: string;
 }
 
-const description = "Astro and Supabase demo app";
+const description = "ឆាប់បានលេង ឆាប់បានសប្បាយ ជាមួយ Platform ដែលលោកអ្នកអាចលេង Game បានដោយសេរី Free ឥតដែលកំណត់, Game ស្រុកខ្មែរ អេមអញ្ចឹងហែក!, Explore our extensive game library and top game store where you can play games quickly and easily. Enjoy a vast collection of free Khmer games with no limits, all in one platform!";
 const { title } = Astro.props;
-const ogImageURL = new URL("hero.png", Astro.site).href;
+const ogImageURL = new URL("pano.png", Astro.site).href;
 const canonicalURL = new URL(Astro.url).href;
 
 // Fetch user data
@@ -34,6 +34,8 @@ const { data: { user } } = await supabase.auth.getUser();
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
+    <meta name="keywords" content="Arena Ikhode, Ikhode Game, Khmer Game, Khmer Game Platform, game library, game store, play games fast, easy game access, free Khmer games, game platform, online game library, play games free, unlimited game access, Khmer game collection" />
+
     
     <!-- Additional Meta Tags -->
     <meta name="theme-color" content="#000000" />
@@ -45,7 +47,7 @@ const { data: { user } } = await supabase.auth.getUser();
     <nav class="border-b bg-white dark:bg-zinc-800 dark:border-zinc-700">
       <div class="flex items-center justify-between p-4 max-w-screen-xl mx-auto">
         <!-- Logo -->
-        <a href="/" class="font-semibold dark:text-white text-zinc-900">Astro</a>
+        <a href="/" class="font-semibold dark:text-white text-zinc-900">Arena Horizon</a>
 
         <!-- User Profile -->
         {user ? (
