@@ -1,20 +1,22 @@
 ---
 import Base from "../layout/Base.astro";
+import { supabase } from "../lib/supabase";
+import { Reviews, type GuestbookEntry } from "../components/Reviews";
+
 import Sidebar from "../layout/Sidebar.astro"; // Import Sidebar
 import Card from "../components/Card.astro";
-import { supabase } from "../lib/supabase";
 import MaFooter from "../components/MaFooter.astro";
 
-export const prerender = true;
-const title = "Welcome to Your Dashboard";
 
-// Fetch user information
-const {
-  data: { user },
-} = await supabase.auth.getUser();
+const { email } = Astro.locals;
+
+const { data } = (await supabase
+  .from("guestbook")
+  .select("name, message")
+  .order("created_at", { ascending: false })) as { data: GuestbookEntry[] };
 ---
 
-<Base title={title}>
+<Base title="Dashboard">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar Toggle Button (Mobile) -->
     <button
@@ -47,11 +49,7 @@ const {
       <h1
         class="text-3xl sm:text-5xl font-extrabold text-center text-gray-800 dark:text-gray-200"
       >
-        {
-          user
-            ? `Welcome, ${user.user_metadata.full_name || "User"}!`
-            : "Welcome to Our Platform!"
-        }
+        Hello Guy
       </h1>
 
       <section
@@ -102,7 +100,22 @@ const {
         />
         <!-- More <Card /> components here -->
       </section>
-
+      <section class="py-24 px-4 w-full flex flex-col items-center gap-2">
+        <p
+          class="max-w-prose text-xl text-indigo-600 dark:text-indigo-400 font-semibold"
+        >
+          {email}
+        </p>
+        <p class="max-w-prose text-lg mb-2 dark:text-zinc-100">
+          This is a protected page. You can only see this if you are logged in.
+        </p>
+        <a
+          href="/api/auth/signout"
+          class="mb-10 bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 px-3 py-1 rounded-md"
+          >Sign out</a
+        >
+        <Reviews reviews={data} client:idle />
+      </section>
       <MaFooter />
     </main>
   </div>
@@ -121,4 +134,5 @@ const {
       });
     }
   </script>
+ 
 </Base>

@@ -2,8 +2,8 @@ import { defineMiddleware } from "astro:middleware";
 import { supabase } from "../lib/supabase";
 import micromatch from "micromatch";
 
-const protectedRoutes = ["/dashboard(|/)"];
-const redirectRoutes = ["/signin(|/)", "/register(|/)"];
+const protectedRoutes = ["/"]; // Added "/" to protect the index route
+const redirectRoutes = ["/signin", "/register"];
 const proptectedAPIRoutes = ["/api/guestbook(|/)"];
 
 export const onRequest = defineMiddleware(
@@ -49,7 +49,7 @@ export const onRequest = defineMiddleware(
       const refreshToken = cookies.get("sb-refresh-token");
 
       if (accessToken && refreshToken) {
-        return redirect("/dashboard");
+        return redirect("/signin");
       }
     }
 
@@ -57,7 +57,6 @@ export const onRequest = defineMiddleware(
       const accessToken = cookies.get("sb-access-token");
       const refreshToken = cookies.get("sb-refresh-token");
 
-      // Check for tokens
       if (!accessToken || !refreshToken) {
         return new Response(
           JSON.stringify({
@@ -67,7 +66,6 @@ export const onRequest = defineMiddleware(
         );
       }
 
-      // Verify the tokens
       const { error } = await supabase.auth.setSession({
         access_token: accessToken.value,
         refresh_token: refreshToken.value,
