@@ -1,9 +1,11 @@
 import type { APIRoute } from "astro";
-import { supabase } from "../../lib/supabase";
 
 export const GET: APIRoute = async ({ cookies }) => {
   const accessToken = cookies.get("sb-access-token");
   const refreshToken = cookies.get("sb-refresh-token");
+
+  console.log(`Access Token: ${accessToken}`);
+  console.log(`Refresh Token: ${refreshToken}`);
 
   if (!accessToken || !refreshToken) {
     return new Response("No session available", { status: 401 });
